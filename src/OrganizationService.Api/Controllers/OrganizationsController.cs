@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrganizationService.Api.Contracts.Requests;
+using OrganizationService.Application.Organizations.Commands.ActivateOrganization;
 using OrganizationService.Application.Organizations.Commands.CreateOrganization;
+using OrganizationService.Application.Organizations.Commands.DeleteOrganization;
 using OrganizationService.Application.Organizations.Commands.InviteMember;
 using OrganizationService.Application.Organizations.Commands.UpdateOrganization;
 using OrganizationService.Application.Organizations.Queries.GetOrganization;
@@ -40,6 +42,35 @@ public class OrganizationsController(IMediator mediator) : ControllerBase
             req.Name,
             req.Type,
             req.Siret
+        ), ct);
+
+        return NoContent();
+    }
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Suspend(Guid id,
+        CancellationToken ct)
+    {
+        // plus tard : UserId depuis le token
+        var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
+
+        await mediator.Send(new SuspendOrganizationCommand(
+            id,
+            userId
+        ), ct);
+
+        return NoContent();
+    }
+    [HttpPost("activate/{id:guid}")]
+    public async Task<IActionResult> Activate(Guid id,CancellationToken ct)
+    {
+        // plus tard : UserId depuis le token
+        var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
+
+        await mediator.Send(new ActivateOrganizationCommand(
+            id,
+            userId
         ), ct);
 
         return NoContent();

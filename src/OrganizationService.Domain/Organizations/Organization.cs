@@ -49,7 +49,7 @@ public class Organization
 
         UpdatedAt = DateTime.UtcNow;
     }
-
+    
     public void Rename(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new DomainException("Organization name is required.");
