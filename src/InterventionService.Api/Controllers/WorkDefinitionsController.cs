@@ -7,7 +7,7 @@ using InterventionService.Application.WorkDefinitions.Queries.GetActiveWorkDefin
 namespace InterventionService.API.Controllers;
 
 [ApiController]
-[Route("api/work-definitions")]
+[Route("work-definitions")]
 public sealed class WorkDefinitionsController : ControllerBase
 {
     private readonly IMediator _mediator;

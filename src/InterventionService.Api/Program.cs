@@ -40,7 +40,7 @@ builder.Services.AddMediatR(cfg =>
 
 // --- Persistence (EF Core + PostgreSQL) ---
 builder.Services.AddDbContext<InterventionDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("InterventionDb")));
 
 // --- Unit of Work : DbContext implémente IUnitOfWork ---
 builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<InterventionDbContext>());

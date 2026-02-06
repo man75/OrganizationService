@@ -12,7 +12,7 @@ using InterventionService.API.Contracts.WorkOrders;
 namespace InterventionService.API.Controllers;
 
 [ApiController]
-[Route("api/workorders")]
+[Route("workorders")]
 public sealed class WorkOrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
