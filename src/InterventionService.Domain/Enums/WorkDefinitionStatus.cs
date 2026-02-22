@@ -3,5 +3,6 @@
 public enum WorkDefinitionStatus
 {
     Active = 1,
-    Inactive = 2
+    Inactive = 2,
+    Archived = 3
 }

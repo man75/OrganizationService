@@ -6,6 +6,8 @@ using MediatR;
 namespace InterventionService.Application.WorkDefinitions.Commands.CreateWorkDefinition;
 
 public sealed record CreateWorkDefinitionCommand(
-    string Name,
-    InterventionType Type
+   string Name,
+    InterventionType Type,
+    int? EstimatedMinutes,
+    string? Notes
 ) : IRequest<Result<WorkDefinitionDto>>;

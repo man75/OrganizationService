@@ -1,3 +1,4 @@
+using ICareCar.Domain.WorkOrders.Definitions;
 using InterventionService.Domain.WorkDefinitions;
 
 namespace InterventionService.Application.Abstractions.Repositories;
@@ -9,4 +10,5 @@ public interface IWorkDefinitionRepository
     Task<bool> ExistsByNameAsync(Guid organizationId, string name, CancellationToken ct);
     Task<IReadOnlyList<WorkDefinition>> GetActiveAsync(Guid organizationId, CancellationToken ct);
     Task<bool> ExistsActiveAsync(Guid organizationId, Guid workDefinitionId, CancellationToken ct);
+    Task<WorkDefinition?> GetByIdWithLinesAsync(Guid id, CancellationToken ct);
 }

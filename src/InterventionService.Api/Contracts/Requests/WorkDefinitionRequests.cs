@@ -3,6 +3,8 @@
 namespace InterventionService.API.Contracts.WorkDefinitions;
 
 public sealed record CreateWorkDefinitionRequest(
-    string Name,
-    InterventionType Type
+  string Name,
+    InterventionType Type,
+    int? EstimatedMinutes,
+    string? Notes
 );

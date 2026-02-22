@@ -69,7 +69,7 @@ public class WorkOrder
 
         Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
 
-        Status = WorkOrderStatus.Planned;
+        Status = WorkOrderStatus.Draft;
 
         ValidateRules();
 
@@ -84,7 +84,7 @@ public class WorkOrder
             if (!VehicleId.HasValue || VehicleId.Value == Guid.Empty)
                 throw new DomainException("VehicleId is required for workshop work orders.");
 
-            if (!DefinitionId.HasValue || DefinitionId.Value == Guid.Empty)
+            if (!DefinitionId.HasValue || DefinitionId.Value != Guid.Empty)
                 throw new DomainException("DefinitionId is required for workshop work orders.");
         }
 

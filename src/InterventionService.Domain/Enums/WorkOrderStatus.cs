@@ -2,8 +2,9 @@
 
 public enum WorkOrderStatus
 {
-    Planned = 1,
-    InProgress = 2,
-    Done = 3,
-    Cancelled = 4
+    Draft = 1,
+    Planned = 2,
+    InProgress = 3,
+    Done = 4,
+    Cancelled = 5
 }

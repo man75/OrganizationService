@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Include="WorkOrders\Commands\CreateWorkshopWorkOrder\CreateWorkshopCommand.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\InterventionService.Domain\InterventionService.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.4.1" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <PropertyGroup>

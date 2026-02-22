@@ -1,3 +1,4 @@
+using ICareCar.Domain.WorkOrders.Definitions;
 using InterventionService.Application.Abstractions;
 using InterventionService.Domain.WorkDefinitions;
 using InterventionService.Domain.WorkOrders;
@@ -14,7 +15,7 @@ public sealed class InterventionDbContext : DbContext, IUnitOfWork
 
     // ? Catalogue types d’intervention
     public DbSet<WorkDefinition> WorkDefinitions => Set<WorkDefinition>();
-
+    public DbSet<WorkDefinitionLine> WorkDefinitionLines => Set<WorkDefinitionLine>();
     public override Task<int> SaveChangesAsync(CancellationToken ct) => base.SaveChangesAsync(ct);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

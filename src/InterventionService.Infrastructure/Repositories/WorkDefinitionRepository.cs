@@ -1,4 +1,5 @@
-﻿using InterventionService.Application.Abstractions.Repositories;
+﻿using ICareCar.Domain.WorkOrders.Definitions;
+using InterventionService.Application.Abstractions.Repositories;
 using InterventionService.Domain.WorkDefinitions;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,4 +39,10 @@ public sealed class WorkDefinitionRepository : IWorkDefinitionRepository
           && x.Status == WorkDefinitionStatus.Active,
         ct
     );
+    public async Task<WorkDefinition?> GetByIdWithLinesAsync(Guid id, CancellationToken ct)
+    {
+        return await _db.WorkDefinitions
+            .Include(x => x.Lines)
+            .FirstOrDefaultAsync(x => x.Id == id, ct);
+    }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterventionService.Domain.Enums
 {
-    public enum WorkOrderLineType
+    public enum WorkDefinitionLineType
     {
         Labor = 1,
         Part = 2,

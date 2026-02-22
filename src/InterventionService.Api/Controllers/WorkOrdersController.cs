@@ -8,6 +8,10 @@ using InterventionService.Application.WorkOrders.Commands.CompleteWorkOrder;
 using InterventionService.Application.WorkOrders.Commands.CancelWorkOrder;
 using InterventionService.Application.WorkOrders.Queries.GetWorkOrderById;
 using InterventionService.API.Contracts.WorkOrders;
+using Microsoft.AspNetCore.Components.Forms;
+using InterventionService.Api.Contracts.Requests;
+using InterventionService.Application.WorkOrders.Commands.ApplyWorkDefinition;
+using InterventionService.Application.WorkOrders.Commands.AddProductLine;
 
 namespace InterventionService.API.Controllers;
 
@@ -26,6 +30,30 @@ public sealed class WorkOrdersController : ControllerBase
     {
         var res = await _mediator.Send(new GetWorkOrderByIdQuery(id), ct);
         return res.IsSuccess ? Ok(res.Value) : NotFound(new { res.Error });
+    }
+    [HttpPost("{id:guid}/apply-definition")]
+    public async Task<IActionResult> ApplyDefinition(Guid id, [FromBody] ApplyWorkDefinitionRequest request, CancellationToken ct)
+    {
+        try
+        {
+         
+            var res = await _mediator.Send(new ApplyWorkDefinitionCommand(id, request.DefinitionId), ct);
+          
+            return res.IsSuccess ? Ok(res.Value) : BadRequest(new { res.Error });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            throw;
+        }
+
+    }
+
+    [HttpPost("{id:guid}/lines/product")]
+    public async Task<IActionResult> AddProductLine(Guid id, [FromBody] AddWorkOrderProductLineRequest request, CancellationToken ct)
+    {
+        var res = await _mediator.Send(new AddWorkOrderProductLineCommand(id, request.ProductId, request.Quantity), ct);
+        return res.IsSuccess ? Ok(res.Value) : BadRequest(new { res.Error });
     }
 
     // -----------------------

@@ -64,7 +64,11 @@ public class WorkOrderLine
 
         Label = label.Trim();
     }
-
+    public void IncreaseQuantity(decimal delta)
+    {
+        if (delta <= 0) throw new DomainException("Quantity delta must be > 0.");
+        Quantity += delta;
+    }
     public Money TotalExclTax()
         => new(Quantity * UnitPriceExclTax.Amount, UnitPriceExclTax.Currency);
 

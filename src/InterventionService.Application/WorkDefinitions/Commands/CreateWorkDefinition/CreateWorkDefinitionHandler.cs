@@ -1,4 +1,7 @@
-﻿using InterventionService.Application.Abstractions;
+﻿
+
+  using ICareCar.Domain.WorkOrders.Definitions;
+using InterventionService.Application.Abstractions;
 using InterventionService.Application.Abstractions.Repositories;
 using InterventionService.Application.Common;
 using InterventionService.Application.DTOs;
@@ -25,7 +28,9 @@ public sealed class CreateWorkDefinitionHandler
         _uow = uow;
     }
 
-    public async Task<Result<WorkDefinitionDto>> Handle(CreateWorkDefinitionCommand request, CancellationToken ct)
+    public async Task<Result<WorkDefinitionDto>> Handle(
+    CreateWorkDefinitionCommand request,
+    CancellationToken ct)
     {
         var orgId = _current.OrganizationId;
 
@@ -44,9 +49,16 @@ public sealed class CreateWorkDefinitionHandler
             type: request.Type
         );
 
+        // 🔥 NOUVEAU
+        entity.SetEstimatedMinutes(request.EstimatedMinutes);
+        entity.SetNotes(request.Notes);
+
         await _repo.AddAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
 
-        return Result<WorkDefinitionDto>.Success(WorkDefinitionMapper.ToDto(entity));
+        return Result<WorkDefinitionDto>.Success(
+            WorkDefinitionMapper.ToDto(entity)
+        );
     }
+
 }

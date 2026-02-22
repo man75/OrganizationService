@@ -1,54 +1,60 @@
-﻿using MediatR;
+﻿using System.Text.Json.Serialization;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-
 using InterventionService.Application.DTOs;
+using InterventionService.Application.Abstractions;
+using InterventionService.Application.Abstractions.Repositories;
+using InterventionService.Application.Common.Behaviors;
 
-using InterventionService.Application.Abstractions; // ICurrentUser, IUnitOfWork
-using InterventionService.Application.Abstractions.Repositories; // repos interfaces
-
-using InterventionService.Infrastructure.Persistence; // InterventionDbContext
-
+using InterventionService.Infrastructure.Persistence;
+using InterventionService.Infrastructure.Persistence.Repositories;
 using InterventionService.Application.Common;
 using StockService.Infrastructure;
-using InterventionService.Application.Common.Behaviors;
-using InterventionService.Infrastructure.Persistence.Repositories;
-using System.Text.Json.Serialization; // HttpCurrentUser (à créer)
+using InterventionService.Infrastructure.Gateways;
+using InterventionService.Application.WorkOrders.Commands.ApplyWorkDefinition;
+
+// ⚠️ Tu as importé StockService.Infrastructure : enlève-le si tu peux.
+// using StockService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("https://localhost:7002");
+// --- Controllers + JSON (AVANT Build) ---
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// --- Services standards ---
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // --- Contexte utilisateur depuis headers (Gateway) ---
 builder.Services.AddHttpContextAccessor();
-
-// ✅ ICurrentUser lu depuis headers
 builder.Services.AddScoped<IUserContext, HttpUserContext>();
 
-// --- MediatR + Pipeline behaviors ---
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(WorkOrderDto).Assembly);
 
-    // Si tu veux garder le même pattern que Stock:
-    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(SecurityValidationBehavior<,>));
-    // Tu peux aussi ajouter ValidationBehavior si tu utilises FluentValidation
-});
 
 // --- Persistence (EF Core + PostgreSQL) ---
 builder.Services.AddDbContext<InterventionDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("InterventionDb")));
 
-// --- Unit of Work : DbContext implémente IUnitOfWork ---
+// --- Unit of Work ---
 builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<InterventionDbContext>());
 
 // --- Repositories ---
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
-
 builder.Services.AddScoped<IWorkDefinitionRepository, WorkDefinitionRepository>();
+// --- MediatR + Pipeline behaviors ---
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(WorkOrderDto).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(ApplyWorkDefinitionCommandHandler).Assembly);
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(SecurityValidationBehavior<,>));
+});
+
+builder.Services.AddHttpClient<IStockGateway, StockGateway>(c =>
+{
+    c.BaseAddress = new Uri(builder.Configuration["ExternalServices:StockApi"]!);
+});
+
 
 var app = builder.Build();
 
@@ -60,6 +66,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+app.MapControllers();   // ✅ manquait
 app.Run();

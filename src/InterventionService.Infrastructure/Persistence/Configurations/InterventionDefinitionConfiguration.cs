@@ -1,4 +1,5 @@
 ﻿
+using ICareCar.Domain.WorkOrders.Definitions;
 using InterventionService.Domain.WorkDefinitions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
