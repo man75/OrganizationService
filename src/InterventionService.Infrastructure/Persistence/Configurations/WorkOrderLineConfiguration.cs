@@ -28,7 +28,7 @@ public sealed class WorkOrderLineConfiguration : IEntityTypeConfiguration<WorkOr
             .IsRequired();
 
         b.Property(x => x.VatRate)
-            .HasColumnType("numeric(5,4)")
+              .HasColumnType("numeric(5,2)")
             .IsRequired();
 
         b.Property(x => x.SortOrder).IsRequired();

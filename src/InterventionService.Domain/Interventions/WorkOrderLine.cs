@@ -32,7 +32,7 @@ public class WorkOrderLine
         if (id == Guid.Empty) throw new DomainException("Line id is required.");
         if (string.IsNullOrWhiteSpace(label)) throw new DomainException("Label is required.");
         if (quantity <= 0) throw new DomainException("Quantity must be > 0.");
-        if (vatRate < 0 || vatRate > 1) throw new DomainException("VatRate must be between 0 and 1.");
+        if (vatRate < 0 || vatRate > 20) throw new DomainException("VatRate must be between 0 and 1.");
 
         if (type == WorkOrderLineType.Part && (!productId.HasValue || productId == Guid.Empty))
             throw new DomainException("ProductId is required for part lines.");

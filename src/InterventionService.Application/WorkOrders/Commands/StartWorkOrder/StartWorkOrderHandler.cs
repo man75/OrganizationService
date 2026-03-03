@@ -20,12 +20,21 @@ public sealed class StartWorkOrderHandler : IRequestHandler<StartWorkOrderComman
 
     public async Task<Result<WorkOrderDto>> Handle(StartWorkOrderCommand request, CancellationToken ct)
     {
-        var wo = await _repo.GetByIdAsync(request.WorkOrderId, ct);
-        if (wo is null) return Result<WorkOrderDto>.Failure("WorkOrder not found.");
+        try
+        {
+            var wo = await _repo.GetByIdAsync(request.WorkOrderId, ct);
+            if (wo is null) return Result<WorkOrderDto>.Failure("WorkOrder not found.");
 
-        wo.Start();
-        await _uow.SaveChangesAsync(ct);
+            wo.Start();
+            await _uow.SaveChangesAsync(ct);
+            return Result<WorkOrderDto>.Success(WorkOrderMapper.ToDto(wo));
+        }
+        catch (Exception ex)
+        {
 
-        return Result<WorkOrderDto>.Success(WorkOrderMapper.ToDto(wo));
+            throw;
+        }
+        
+     
     }
 }

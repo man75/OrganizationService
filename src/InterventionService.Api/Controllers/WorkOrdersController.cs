@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using InterventionService.Api.Contracts.Requests;
 using InterventionService.Application.WorkOrders.Commands.ApplyWorkDefinition;
 using InterventionService.Application.WorkOrders.Commands.AddProductLine;
+using InterventionService.Application.WorkOrders.Commands.UpdateWorkOrder;
 
 namespace InterventionService.API.Controllers;
 
@@ -48,6 +49,33 @@ public sealed class WorkOrdersController : ControllerBase
         }
 
     }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateWorkOrderRequest request, CancellationToken ct)
+    {
+        var input = new UpdateWorkOrderInput(
+            ScheduledAt: request.ScheduledAt,
+            TechnicianId: request.TechnicianId,
+            Notes: request.Notes,
+            Lines: (request.Lines ?? Array.Empty<UpdateWorkOrderLineRequest>())
+                .Select(l => new UpdateWorkOrderLineInput(
+                    Type: 1,
+                    Label: l.Label,
+                    Quantity: l.Quantity,
+                    UnitPriceExclTax: l.UnitPriceExclTax,
+                    VatRate: l.VatRate,
+                    ProductId: l.ProductId,
+                    SortOrder: l.SortOrder
+                ))
+                .ToList()
+        );
+
+        var res = await _mediator.Send(new UpdateWorkOrderCommand(id, input), ct);
+        return res.IsSuccess ? Ok(res.Value) : BadRequest(new { res.Error });
+    }
+    // -----------------------
+    // UPDATE / SAVE (header + lines)
+    // -----------------------
 
     [HttpPost("{id:guid}/lines/product")]
     public async Task<IActionResult> AddProductLine(Guid id, [FromBody] AddWorkOrderProductLineRequest request, CancellationToken ct)

@@ -171,7 +171,7 @@ public class WorkOrder
     // --------------------
     // Lifecycle
     // --------------------
-    public void AssignTechnician(Guid technicianId)
+    public void AssignTechnician(Guid? technicianId)
     {
         EnsureEditable();
 
@@ -196,8 +196,8 @@ public class WorkOrder
 
     public void Start()
     {
-        if (Status != WorkOrderStatus.Planned)
-            throw new DomainException("Only planned work orders can be started.");
+        if (Status is not (WorkOrderStatus.Draft or WorkOrderStatus.Planned))
+            throw new DomainException("Only draft or planned work orders can be started.");
 
         Status = WorkOrderStatus.InProgress;
         StartedAt = DateTime.UtcNow;
@@ -249,4 +249,21 @@ public class WorkOrder
         => new(_lines.Sum(l => l.TotalInclTax().Amount), Currency);
 
     private void Touch() => UpdatedAt = DateTime.UtcNow;
+
+    public void UpdateSchedule(DateTime scheduledAt)
+    {
+        ScheduledAt = scheduledAt;
+        Touch();
+    }
+
+    public void UpdateNotes(string? notes)
+    {
+       Notes = notes;
+        Touch();
+    }
+
+    public void ClearLines()
+    {
+        _lines.Clear();
+    }
 }
